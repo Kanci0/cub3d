@@ -11,7 +11,7 @@ char *ft_strcpy(char *dst, const char *src) {
         i++;
 		j++;
     }
-    dst[i] = '\0';
+    dst[j] = '\0';
     return dst;
 }
 
@@ -26,7 +26,6 @@ bool check_for_all(t_game *game)
 void find_id(char *str, t_game *game)
 {
 	size_t len;
-
 	len = ft_strlen(str + 2);
 
 	if(!ft_strncmp(str, "NO",2)){
@@ -59,17 +58,61 @@ void find_id(char *str, t_game *game)
 
 bool is_map_part(t_game *game, char *str){
 	int i = 0;
-
+	if(str[0] == '\n')
+			return false;
+	i = 0;
 	while (str[i]){
-		if (str[i] == ' ' || str[i] == '1')
+		if (str[i] == ' ' || str[i] == '1'){
 			i++;
+		}
 		else
 			break ;
 	}
-	if ((ft_strlen(str) - 1 == i) && check_for_all(game))
+	if ((ft_strlen(str) - 1 == i) && check_for_all(game)){
+		printf("returned true\n");
 		return true;
+	}
 	return false;
 }
+
+int ft_isspace(char c) {
+    return (c == ' '  || c == '\t' || c == '\n' || 
+            c == '\v' || c == '\f' || c == '\r');
+}
+bool is_not_map_format(char *str){
+	size_t len;
+	int i;
+
+	i = 0;
+	len = ft_strlen(str);
+	while (str[i] == ' ' || str[i] == '0' || str[i] == '1' || str[i] == 'N' 
+			|| str[i] == 'S' || str[i] == 'W' || str[i] == 'E' || str[i] == '\n')
+			i++;
+	if (i != len){
+		return (1);
+	}
+	return(0);
+}
+
+
+int is_only_whitespace(const char *str, bool map_status) {
+
+	if (is_not_map_format(str) && map_status == true){
+		printf("Wrong Format inside map part\n");
+		printf("End Program");
+	}
+    while (*str) {
+        if (!ft_isspace(*str)) {
+            return 0; 
+        }
+        str++;
+    }
+	if (map_status == true){
+		printf("white line in map");
+	}
+    return 1;
+}
+
 
 void fill_map_vals(t_game *game, char *str)
 {
@@ -81,16 +124,20 @@ void fill_map_vals(t_game *game, char *str)
 	fd_vals = open(str, O_RDONLY);
 	while(1){
 		line = get_next_line(fd_vals);
+		if (map_started == false)
+			game->map.lines_tilmap += 1;
 		if (!line)
 			break;
-		if (is_map_part(game, line)) {
+		if (is_only_whitespace(line, map_started))
+			continue;
+		if (map_started == false && is_map_part(game, line)) {
             map_started = true;
             free(line);
             continue;
         }
-		if (!map_started){
+		if (!map_started)
 			find_id(line, game);
-		}
 		free(line);
 	}
+	close(fd_vals);
 }
