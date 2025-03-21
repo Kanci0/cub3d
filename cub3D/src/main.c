@@ -10,6 +10,7 @@ void start_game(t_game *game){
     game->map.highest_x = 0;
     game->map.highest_y = 0;
     game->map.lines_tilmap = -1;
+    game->player.is_player = 0;
 }
 
 /*void print_char_array(char **array, int rows) {
