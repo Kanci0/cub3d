@@ -17,43 +17,52 @@ char *ft_strcpy(char *dst, const char *src) {
 
 bool check_for_all(t_game *game)
 {
-	if (game->textures.NO != NULL && game->textures.WE != NULL && game->textures.SO != NULL &&
-		game->textures.EA != NULL && game->textures.F != NULL && game->textures.C != NULL)
+	if (game->textures.no_path != NULL && game->textures.we_path != NULL && game->textures.so_path != NULL &&
+		game->textures.ea_path != NULL && game->textures.F != NULL && game->textures.C != NULL)
 		return (true);
 	return (false);
 }
 
 void find_id(char *str, t_game *game)
 {
-	size_t len;
-	len = ft_strlen(str + 2);
+    char *value;
 
-	if(!ft_strncmp(str, "NO",2)){
-		game->textures.NO = malloc(len + 1);
-		ft_strcpy(game->textures.NO, str + 3);
-	}
-	else if(!ft_strncmp(str, "SO", 2)){
-		game->textures.SO = malloc(len + 1);
-		ft_strcpy(game->textures.SO, str + 3);
-	}
-	else if(!ft_strncmp(str, "WE", 2)){
-		game->textures.WE = malloc(len + 1);
-		ft_strcpy(game->textures.WE, str + 3);
-	}
-	else if(!ft_strncmp(str, "EA", 2)){
-		game->textures.EA = malloc(len + 1);
-		ft_strcpy(game->textures.EA, str + 3);
-	}
-	else if (!ft_strncmp(str, "C", 1)){
-		game->textures.C = malloc(len);
-		ft_strcpy(game->textures.C, str + 2);
-	}
-	else if (!ft_strncmp(str, "F", 1)){
-		game->textures.F = malloc(len);
-		ft_strcpy(game->textures.F, str + 2);
-	} else {
-		printf("Error: Unknown identifier -> %s\n", str);
-	}
+    printf("Odczytana linia: '%s'\n", str); // 🟢 DEBUG
+
+    // Znajdź pierwszą spację i przejdź do wartości
+    value = ft_strchr(str, ' ');
+    if (!value || !*(value + 1))
+    {
+        printf("Error: Brak wartości dla identyfikatora -> %s\n", str);
+        return;
+    }
+    value = ft_strtrim(value + 1, " \n"); // Usunięcie spacji i nowej linii
+
+    if (!value)
+    {
+        printf("Error: ft_strtrim() zwrócił NULL\n");
+        return;
+    }
+
+    if (!ft_strncmp(str, "NO", 2))
+        game->textures.no_path = value;
+    else if (!ft_strncmp(str, "SO", 2))
+        game->textures.so_path = value;
+    else if (!ft_strncmp(str, "WE", 2))
+        game->textures.we_path = value;
+    else if (!ft_strncmp(str, "EA", 2))
+        game->textures.ea_path = value;
+    else if (!ft_strncmp(str, "C", 1))
+        game->textures.C = value;
+    else if (!ft_strncmp(str, "F", 1))
+        game->textures.F = value;
+    else
+    {
+        printf("Error: Nieznany identyfikator -> %s\n", str);
+        free(value);
+    }
+
+    printf("Przypisano: %s -> '%s'\n", str, value); // 🟢 DEBUG
 }
 
 bool is_map_part(t_game *game, char *str){

@@ -99,7 +99,7 @@ bool player_in_map(t_game *game, int pos_x, int pos_y){
 	return (1);
 }
 
-bool zero_check(t_game *game){
+void zero_check(t_game *game){
 	int i;
 	int j;
 
@@ -113,6 +113,9 @@ bool zero_check(t_game *game){
 			if (!is_player_value(game->map.valid_map[i][j])){
 				player_in_map(game,j, i);
 				game->player.is_player++;
+				game->player.px = (float)j;
+				game->player.py = (float)i;
+				printf("%i | %i\n", (int)game->player.px, (int)game->player.py);
 			}
 			if (game->player.is_player > 1)
 				printf("amount of players is more than 1");
@@ -122,7 +125,7 @@ bool zero_check(t_game *game){
 	}
 }
 
-bool check_boundaries_x(t_game *game){
+void check_boundaries_x(t_game *game){
 	int i;
 
 	i = 0;
@@ -145,7 +148,7 @@ bool check_boundaries_x(t_game *game){
 	}
 }	
 
-bool check_boundaries_y(t_game *game){
+void check_boundaries_y(t_game *game){
 	int i;
 
 	i = 0;
